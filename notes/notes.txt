@@ -1,0 +1,28 @@
+This project is meant to create a better version of Twitter. It will not have any political bias at all.
+
+Roles:
+	1. User - any human who uses this platform for any purpose
+	2. System - this happens behind the scenes
+
+Use Cases:
+	1. New user signup
+	2. User changes/resets password
+	3. When user forgets their password
+	4. User sets up profile
+		~Profile includes nickname, contact info, facts about themselves, etc.
+	5. User find other users
+	6. User follows other users
+	7. User retrieves feeds from the user they follow
+	8. User likes a chirp
+	9. User can re-chirp
+	10. User replies to a chirp
+	11. User can post a chirp
+	12. User can friend other users
+
+System:
+	1. Validates a signup user's identity (i.e, by e-mail or SMS text)
+	2. Stores a user's credentials (Username, Password)
+	3. Stores any chirps
+	4. Recommends interesting hoots to the user
+	5. Store user-user relationships (follow, friend)
+	6. Sends emails with the system account (noreply)

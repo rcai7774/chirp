@@ -1,0 +1,4 @@
+
+<--!onclick="document.location.href='emailverify.html'" --> 
+<input style="background-color: DarkCyan;" type="button" name="submit" value="Submit"/>
+            <input style="background-color: DarkCyan;" type="reset" name="reset" value="Reset" />
