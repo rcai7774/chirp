@@ -6,158 +6,166 @@
             Sign Up for Chirp
         </title>
         <script>
-            function process() {
-                alert("Hello");
+            function sendData(){
+            	let username = document.getElementById("username").value;
+            	let password = document.getElementById("password").value;
+							console.log(password)
+            	let search = window.location.search;
+            	let params = new URLSearchParams(search);
+            	let bla = params.get("e");
+            	let info = {
+            		email: bla,
+            		username: username,
+            		password: password
+            	}
+							console.log(info)
+            	fetch('/api/sign-up', {
+            		method: 'post',
+            		headers: {
+            			'Accept' : 'application/json, text/plain, */*', 'Content-Type' : 'application/json'
+            		},
+            	body: JSON.stringify(info)
+            	})
+            	.then(res=>res.json()).then(res=>console.log(res))
+						}
+            function checkUsername(username){
+            	if(db.get(username)){
+            		result.innerHTML = "This username has already been taken. Please use another username."
+            	}else{
+            		return username;
+            	}
             }
+                  function checkFirstName(FirstNameInput) {
+                      if (FirstNameInput.value.length < 2) {
+                          FirstNameInput.focus();
+                          alert("Your First Name is Too Short:" + FirstNameInput.value);
+                      } else {
+                          FirstNameInput.value = toProperCase(FirstNameInput.value);
+                      }
+                      localStorage.setItem("firstName", FirstNameInput.value);
+                  }
 
-            function checkFirstName(FirstNameInput) {
-                if (FirstNameInput.value.length < 2) {
-                    FirstNameInput.focus();
-                    alert("Your First Name is Too Short:" + FirstNameInput.value);
-                } else {
-                    FirstNameInput.value = toProperCase(FirstNameInput.value);
-                }
-                localStorage.setItem("firstName", FirstNameInput.value);
-            }
+                  function checkLastName(LastNameInput) {
+                      if (LastNameInput.value.length < 2) {
+                          LastNameInput.focus();
+                          alert("Your Last Name is Too Short:" + LastNameInput.value);
+                      } else {
+                          LastNameInput.value = toProperCase(LastNameInput.value);
+                      }
+                      localStorage.setItem("lastName", LastNameInput.value);
+                  }
 
-            function checkLastName(LastNameInput) {
-                if (LastNameInput.value.length < 2) {
-                    LastNameInput.focus();
-                    alert("Your Last Name is Too Short:" + LastNameInput.value);
-                } else {
-                    LastNameInput.value = toProperCase(LastNameInput.value);
-                }
-                localStorage.setItem("lastName", LastNameInput.value);
-            }
+                  function toProperCase(username) {
+                      return username.slice(0, 1).toUpperCase() + username.slice(1).toLowerCase();
+                  }
 
-            function toProperCase(username) {
-                return username.slice(0, 1).toUpperCase() + username.slice(1).toLowerCase();
-            }
+                  function checkBirthday(BirthdayInput) {
+            		alert(BirthdayInput.value);
+                      let date = new Date(BirthdayInput.value);
+                      alert(date);
+                      let year = date.getYear();
+                      let now = new Date();
+                      alert(year + now);
+                      let age = now.getYear() - year;
+                      alert(age);
 
-            function checkBirthday(BirthdayInput) {
-                alert(BirthdayInput.value);
-                let date = new Date(BirthdayInput.value);
-                alert(date);
-                let year = date.getYear();
-                let now = new Date();
-                alert(year + now);
-                let age = now.getYear() - year;
-                alert(age);
-            }
+                  }
+                  //function checkPassword(PasswordInput) {
+                      //if (PasswordInput.value.length < 8) {
+                         // PasswordInput.focus();
+                     // }
+                      //alert("Your PassWord is too Small: PassWords have to be at least 8 letters or numbers long");
+                     // if (PasswordInput.value === PasswordInput.value.toLowerCase() || PasswordInput.value === PasswordInput.value.toUpperCase()) {
+                       //   alert("Your PassWord needs to have different cased letters");
+                     // }
+                     // let hasNumber = false;
+                     // debugger;
+                     // for (let i = 0; i < PasswordInput.value.length; i++) {
+                         // if (0 * PasswordInput.value[i] === 0) //{
+                          //    hasNumber = true;
+                           //   break;
+                       //   }
+                    //  }
+                   //   if (!hasNumber) alert("You need to have a number in your PassWord");
+               //   }
 
-            function checkAge(AgeInput) {
-                alert(AgeInput.value);
-                if (AgeInput.value < 5) {
-                    AgeInput.focus();
-                    alert("Your Age is too Small: " + AgeInput.value);
-                } else if (AgeInput.value > 100) {
-                    alert("Your Age is too Big: " + AgeInput.value);
-                }
-            }
+                  function checkPhoneNumber(phoneNumberInput) {
+                      debugger;
+                      phoneNumber = phoneNumberInput.value;
+                      alert(phoneNumber);
+                      let cleanNumber = "";
+                      for (let n = 0; n < phoneNumber.length; n++) {
+                          if (0 * phoneNumber[n] === 0) {
+                              cleanNumber += phoneNumber[n];
+                          }
+                      }
+                      if (cleanNumber.length < 10) alert("You do not have your full phone number.");
+                      if (cleanNumber[0] === "1") cleanNumber = cleanNumber.slice(1);
+                      alert(cleanNumber);
+                      alert("This is your phone number without the 1 in it." + cleanNumber);
+                      phoneNumberInput.value = cleanNumber;
+                  }
 
-            function checkGender(Gender) {
-                alert(Gender);
-            }
+                  function checkEmail(Email) {
+                      if (Email.indexOf("@") > 1 && Email.lastIndexOf(".") > Email.indexOf("@")) {
+                          alert(Email);
+                      } else {
+                          alert("Your email is not complete");
+                      }
+                  }
 
-            function checkPassword(PasswordInput) {
-                if (PasswordInput.value.length < 8) {
-                    PasswordInput.focus();
-                }
-                alert("Your PassWord is too Small: PassWords have to be at least 8 letters or numbers long");
-                if (PasswordInput.value === PasswordInput.value.toLowerCase() || PasswordInput.value === PasswordInput.value.toUpperCase()) {
-                    alert("Your PassWord needs to have different cased letters");
-                }
-                let hasNumber = false;
-                debugger;
-                for (let i = 0; i < PasswordInput.value.length; i++) {
-                    if (0 * PasswordInput.value[i] === 0) {
-                        hasNumber = true;
-                        break;
-                    }
-                }
-                if (!hasNumber) alert("You need to have a number in your PassWord");
-            }
-
-            function checkPhoneNumber(phoneNumberInput) {
-                debugger;
-                phoneNumber = phoneNumberInput.value;
-                alert(phoneNumber);
-                let cleanNumber = "";
-                for (let n = 0; n < phoneNumber.length; n++) {
-                    if (0 * phoneNumber[n] === 0) {
-                        cleanNumber += phoneNumber[n];
-                    }
-                }
-                if (cleanNumber.length < 10) alert("You do not have your full phone number.");
-                if (cleanNumber[0] === "1") cleanNumber = cleanNumber.slice(1);
-                alert(cleanNumber);
-                alert("This is your phone number without the 1 in it." + cleanNumber);
-                phoneNumberInput.value = cleanNumber;
-            }
-
-            function checkEmail(Email) {
-                if (Email.indexOf("@") > 1 && Email.lastIndexOf(".") > Email.indexOf("@")) {
-                    alert(Email);
-                } else {
-                    alert("Your email is not complete");
-                }
-            }
-
-            function checkInfo(info) {
-                alert(info);
-                let words = info.split(" ");
-                if (words.length < 10) {
-                    alert("You need to type more in this input field");
-                }
-                let sentence = info.split(".");
-                if (sentence.length < 3) {
-                    alert("Please enter at least two sentences");
-                }
-            }
+                  function checkInfo(info) {
+                      alert(info);
+                      let words = info.split(" ");
+                      if (words.length < 10) {
+                          alert("You need to type more in this input field");
+                      }
+                      let sentence = info.split(".");
+                      if (sentence.length < 3) {
+                          alert("Please enter at least two sentences");
+                      }
+                  }
         </script>
     </head>
 
-    <body class="signup">
+    <body class="signup" style="background-color: LightSeaGreen; font-family: Courier New;">
         <h1>
             Sign Up for Chirp
         </h1>
-        <form onsubmit="process()">
+        <form>
+            Username:
+            <input style="background-color: LightSeaGreen;" type="text" id="username" name="username" onsubmit="checkUsername(username)" />
+            <br />
             First Name:
-            <input style="background-color: #ccffff;" type="text" name="First Name" onchange="checkFirstName(this)" />
+            <input style="background-color: LightSeaGreen;" type="text" id="firstname" name="First Name" onchange="checkFirstName(this)" />
             <br />
             Last Name:
-            <input style="background-color: #ccffff;" type="text" name="Last Name" onchange="checkLastName(this)" />
+            <input style="background-color: LightSeaGreen;" type="text" id="lastname" name="Last Name" onchange="checkLastName(this)" />
             <br />
             Birth Date (mm/dd/yyyy):
-            <input style="background-color: #ccffff;" type="date" name="Birth Date" onchange="checkBirthday(this)" />
+            <input style="background-color: LightSeaGreen;" type="date" id="birth_date" name="Birth Date" onchange="checkBirthday(this)" />
             <br />
-            Age
-            <input style="background-color: #ccffff;" type="number" name="Age" onchange="checkAge(this)" />
-            <br />
-            Gender: Male <input style="background-color: #ccffff;" type="radio" name="Gender" value="Male" onchange="checkGender('male')" /> Female <--! This is a comment -->
-            <input style="background-color: #ccffff;" type="radio" name="Gender" value="Female" onchange="checkGender('female')" />
+            Gender
+            <select style="background-color: LightSeaGreen;" name="dropdown" id="gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
             <br />
             Phone Number:
-            <input style="background-color: #ccffff;" type="text" name="Phone Number" onchange="checkPhoneNumber(this)" />
+            <input style="background-color: LightSeaGreen;" type="text" id="phone" name="Phone Number" onchange="checkPhoneNumber(this)" />
             <br />
-            Email Address
-            <input style="background-color: #ccffff;" type="text" name="Email Address" onchange="checkEmail(this.value)" />
-            <br />
-            Other Personal Information (2 sentences)
-            <br />
-            <textarea style="background-color: #ccffff;" rows="5" cols="50" name="Info" onchange="checkInfo (this.value)">Enter Information Here...</textarea>
-            <br />
-            Set PassWord
-            <input style="background-color: #ccffff;" type="password" name="password" onchange="checkPassword(this)" />
+            Set Password
+            <input style="background-color: LightSeaGreen;" type="text" id="password" name = "password" onsubmit = ""/>
             <br />
             Notifications
-            <select style="background-color: #ccffff;" name="dropdown">
+            <select style="background-color: LightSeaGreen;" name="dropdown" id="notification_status">
                 <option value="Recieve Notifications" selected> Recieve Notifications</option>
                 <option value="Do Not Recieve Notifications">Do Not Recieve Notifications</option>
             </select>
             <br />
-            <input style="background-color: #ccffff;" type="button" name="submit" value="Submit" onclick="document.location.href='reply.html'" />
-            <input style="background-color: #ccffff;" type="reset" name="reset" value="Reset" />
+            <input style="background-color: LightSeaGreen;" type="button" name="submit" value="Submit" onclick="sendData()" />
+            <input style="background-color: LightSeaGreen;" type="reset" name="reset" value="Reset" />
         </form>
-    </body>
+        <div id = "result"> </div>
+        </body>
 </html>

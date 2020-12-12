@@ -21,9 +21,21 @@ app.get("/verify/:email", (req, res) => {
     console.log(email);
     //res.json({ success: email });
 		//res.redirect("");
-		res.sendFile(__dirname + "/public/emailverify.html");
+		console.log("success!" + email)
+		res.json({ "success" : email });
 });
 // recieve email, form a link, send email to user with link, return to user
+app.get("/signup/", (req, res) => {
+	res.sendFile(__dirname + "/public/signup.html");
+});
+
+app.get("/login/", (req, res) => {
+	res.sendFile(__dirname + "/public/login.html");
+})
+
+app.get("/accountSetup/", (req, res) => {
+	res.sendFile(__dirname + "/public/signup1.html")
+})
 
 const cors = require("cors");
 // set up port

@@ -3,3 +3,4 @@ test cases:curl http://localhost:3000/verify/yayyy@gmail.com
 curl http://localhost:3000/api/sign-up -d {email:"yayyyy@gmail.com"}
 
 curl -d '{"email": "the_green_pickle@bla.com", "username":"CUCUMBERS", "password": "Barbican", "password_repeat": "Barbican"}' -H "Content-Type: application/json" http://localhost:3000/api/sign-up
+#c4e2ed

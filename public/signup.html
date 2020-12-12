@@ -4,6 +4,7 @@
         <title>Sign Up for Chirp</title>
         <script>
             function signUp() {
+							debugger;
                 let email = document.getElementById("email").value;
                 let result = document.getElementById("result");
                 if (email.indexOf("@") > 1 && email.lastIndexOf(".") > email.indexOf("@")) {
@@ -12,27 +13,22 @@
                         .then((response) => response.json())
 
                         .then((res) => {
-                            result.innerHTML = "An email was sent to " + res.success + ". Please verify your email to begin quacking!";
+                            result.innerHTML = "An email was sent to " + res.success + ". Please verify your email to begin chirping!";
                         });
                 } else {
                     result.innerHTML = "Please input a valid email address to continue.";
                 }
             }
         </script>
-				<link rel="stylesheet" href="styles.css" />
     </head>
-    <body class="signup">
+    <body class="signup" style = "background-color: LightSeaGreen; font-family: Courier New;">
         <h1>Sign Up for Chirp ™</h1>
         <p>Please Provide the information below:</p>
         <div id="result"></div>
-        <form onsubmit="process()">
-            Email Address
-            <input id="email" style="background-color: DarkCyan;" type="text" name="Email Address" onchange="signUp()" />
+				<br>
+            Email Address:
+            <input style = "background-color: LightSeaGreen"type="text" id = "email" name="Email Address"/>
             <br />
-            <input style="background-color: DarkCyan;" type="button" name="submit" value="Submit"/>
-            <input style="background-color: DarkCyan;" type="reset" name="reset" value="Reset" />
-
-        </form>
-				<div id = "result"></div>
+            <button style = "background-color: LightSeaGreen" type="button" onclick = "signUp()">Sign Up</button>
     </body>
 </html>

@@ -13,11 +13,7 @@ module.exports = {
             });
         }
         // password (repeat) does not match
-        if (!req.body.password_repeat || req.body.password != req.body.password_repeat) {
-            return res.status(400).send({
-                msg: "Both passwords must match",
-            });
-        }
+       
         next();
     },
 
