@@ -15,8 +15,9 @@ router.post("/sign-up", userMiddleware.validateRegister, (req, res, next) => {
 			`SELECT * FROM Users WHERE LOWER(id) = LOWER(${db.escape(
 				req.body.email)});`, 
 				(err, result) => {
-        if (result.length) {
+        if (result.length > 0) {
         	console.log('409')
+					console.log(result)
             return res.status(409).send({
                 msg: "This email is already in use!",
             });
@@ -86,13 +87,13 @@ router.post("/login", (req, res, next) => {
                     },
                     "SECRETKEY",
                     {
-                        expiresIn: "7d",
+                        expiresIn: "1d",
                     }
                 );
                 db.query(`UPDATE Users SET last_login = now() WHERE id = '${result[0].id}'`);
                 return res.status(200).send({
                     msg: "Logged in!",
-                    token,
+                    token: token,
                     user: result[0],
                 });
             }

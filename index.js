@@ -33,6 +33,10 @@ app.get("/login/", (req, res) => {
 	res.sendFile(__dirname + "/public/login.html");
 })
 
+app.get("/home/" , (req,res) => {
+	res.sendFile(__dirname + "/public/homepage.html");
+})
+
 app.get("/accountSetup/", (req, res) => {
 	res.sendFile(__dirname + "/public/signup1.html")
 })

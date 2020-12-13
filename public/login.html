@@ -3,19 +3,42 @@
     <head>
         <title>Log In to Chirp</title>
         <script>
-           
+           function logMeIn(){
+            	let username = document.getElementById("username").value;
+            	let password = document.getElementById("password").value;
+							console.log(password)
+            	let info = {
+            		username: username,
+            		password: password
+            	}
+							console.log(info)
+            	fetch('/api/login', {
+            		method: 'post',
+            		headers: {
+            			'Accept' : 'application/json, text/plain, */*', 'Content-Type' : 'application/json'
+            		},
+            	body: JSON.stringify(info)
+            	})
+            	.then(res=>res.json()).then(res=>{
+							console.log(res);
+							let token = res.token; 
+							localStorage.setItem("token" , token);
+							window.open("https://chirp.rcai7774.repl.co/home" , "_parent");
+							}
+							)
+						}
         </script>
     </head>
     <body class="signup" style = "background-color: LightSeaGreen; font-family: Courier New;">
         <h1>Log In to Chirp ™</h1>
         <p>Log In to Chirp here! Please input your email and password below:</p>
 				<br>
-            Email Address:
-            <input style = "background-color: LightSeaGreen"type="text" id = "email" name="Email Address"/>
+            Username:
+            <input style = "background-color: LightSeaGreen"type="text" id = "username" name="Username"/>
             <br>
 						<br>
 						Password:
-            <input style="background-color: LightSeaGreen;" type="text" id="password" name = "password"/>
+            <input style="background-color: LightSeaGreen;" type="password" id="password" name = "password"/>
 						<br>
             <button style = "background-color: LightSeaGreen" type="button" onclick = "logMeIn()">Log In</button>
     </body>
