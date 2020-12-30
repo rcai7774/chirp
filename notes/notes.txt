@@ -18,6 +18,8 @@ Use Cases:
 	10. User replies to a chirp
 	11. User can post a chirp
 	12. User can friend other users
+	13. User can read other chirps
+	14. user can log in and log out
 
 System:
 	1. Validates a signup user's identity (i.e, by e-mail or SMS text)

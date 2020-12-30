@@ -85,9 +85,9 @@ router.post("/login", (req, res, next) => {
                         username: result[0].username,
                         userId: result[0].id,
                     },
-                    "SECRETKEY",
+                    'SECRETKEY',
                     {
-                        expiresIn: "1d",
+                        expiresIn: "7d",
                     }
                 );
                 db.query(`UPDATE Users SET last_login = now() WHERE id = '${result[0].id}'`);
@@ -104,11 +104,66 @@ router.post("/login", (req, res, next) => {
     });
 });
 
-router.get("/secret-route", (req, res, next) => {
-    res.send("This is the secret content. Only logged in users can see that!");
+
+router.get('/secret-route', userMiddleware.isLoggedIn, (req, res, next) => {
+  console.log(req.userData);
+  res.send('This is the secret content. Only logged in users can see that!');
 });
 
 
+router.post('/post-message', userMiddleware.isLoggedIn, (req, res, next) => {
+console.log(req.userData.username);
+console.log(req.body.message);
+db.query(
+`INSERT INTO Messages (author, message, posted_at) VALUES ('${req.userData.username}', ${db.escape(
+req.body.message
+)}, now())`,
+(err, result) => {
+if (err) {
+throw err;
+return res.status(400).send({
+msg: err
+});
+}
+return res.status(201).send({
+msg: 'Sent!'
+});
+}
+);
+});
 
+router.post('/like-message', userMiddleware.isLoggedIn, (req, res, next) => {
+	console.log('entering here');
+	db.query(
+		`UPDATE Messages
+		SET post_likes = post_likes + 1
+		WHERE id = ${req.body.id}`,
+(err, result) => {
+if (err) {
+throw err;
+return res.status(400).send({
+msg: err
+});
+}
+return res.status(202).send({
+msg: 'Liked!'
+});
+}
+);
+});
+
+router.get('/get-messages', userMiddleware.isLoggedIn, (req, res, next) => {
+console.log(req.userData);
+db.query(
+`SELECT * FROM Messages`,
+(err, result) => {
+if (err) {
+throw err;
+}
+console.log(result)
+res.json(result);
+}
+);
+});
 
 module.exports = router;

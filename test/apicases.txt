@@ -1,6 +1,10 @@
-
 test cases:curl http://localhost:3000/verify/yayyy@gmail.com
 curl http://localhost:3000/api/sign-up -d {email:"yayyyy@gmail.com"}
 
-curl -d '{"email": "the_green_pickle@bla.com", "username":"CUCUMBERS", "password": "Barbican", "password_repeat": "Barbican"}' -H "Content-Type: application/json" http://localhost:3000/api/sign-up
+curl -d '{"email": "the_green_pickle@bla.com", "username":"Farringdon", "password": "Barbican", "password_repeat": "Barbican"}' -H "Content-Type: application/json" http://localhost:3000/api/sign-up
 #c4e2ed
+
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+
+curl http://localhost:3000/api/secret-route -H "authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJjYWk3Nzc0IiwidXNlcklkIjoicmNhaTc3NzRAZ21haWwuY29tIiwiaWF0IjoxNjA3OTE3MjUzLCJleHAiOjE2MDg1MjIwNTN9.OXVbqsa8LuTXnzqfox9-2xDMhHOKxlcSGkbQfP7m5qo"
