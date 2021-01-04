@@ -7,45 +7,39 @@ const db = require("../lib/db.js");
 const userMiddleware = require("../middleware/users.js");
 
 router.post("/sign-up", userMiddleware.validateRegister, (req, res, next) => {
-	console.log(req.body);
-	console.log("trying to sign up");
-	console.log('req.body.email:'+ db.escape(req.body.email));
-	console.log('req.body.password:'+ db.escape(req.body.password));
-    db.query(
-			`SELECT * FROM Users WHERE LOWER(id) = LOWER(${db.escape(
-				req.body.email)});`, 
-				(err, result) => {
+    console.log(req.body);
+    console.log("trying to sign up");
+    console.log("req.body.email:" + db.escape(req.body.email));
+    console.log("req.body.password:" + db.escape(req.body.password));
+    db.query(`SELECT * FROM Users WHERE LOWER(id) = LOWER(${db.escape(req.body.email)});`, (err, result) => {
         if (result.length > 0) {
-        	console.log('409')
-					console.log(result)
+            console.log("409");
+            console.log(result);
             return res.status(409).send({
                 msg: "This email is already in use!",
             });
         } else {
             // username is available
-						console.log('entering bcrypt')
+            console.log("entering bcrypt");
             bcrypt.hash(req.body.password, 10, (err, hash) => {
                 if (err) {
-                	console.log(err)
-									console.log(db.escape(hash))
+                    console.log(err);
+                    console.log(db.escape(hash));
                     return res.status(500).send({
                         msg: err,
                     });
                 } else {
                     // has hashed pw => add to database
-                    db.query(`INSERT INTO Users (id, username, password, registered) VALUES ('${req.body.email}', ${db.escape(
-											req.body.username
-											)}, ${db.escape(hash)}, now())`,
-											 (err, result) => {
+                    db.query(`INSERT INTO Users (id, username, password, registered) VALUES ('${req.body.email}', ${db.escape(req.body.username)}, ${db.escape(hash)}, now())`, (err, result) => {
                         if (err) {
                             throw err;
-                            console.log(err)
-														console.log(hash)
+                            console.log(err);
+                            console.log(hash);
                             return res.status(400).send({
                                 msg: err,
                             });
                         }
-                        console.log("reached here")
+                        console.log("reached here");
                         return res.status(201).send({
                             msg: "Registered!",
                         });
@@ -85,7 +79,7 @@ router.post("/login", (req, res, next) => {
                         username: result[0].username,
                         userId: result[0].id,
                     },
-                    'SECRETKEY',
+                    "SECRETKEY",
                     {
                         expiresIn: "7d",
                     }
@@ -104,40 +98,41 @@ router.post("/login", (req, res, next) => {
     });
 });
 
-
-router.get('/secret-route', userMiddleware.isLoggedIn, (req, res, next) => {
-  console.log(req.userData);
-  res.send('This is the secret content. Only logged in users can see that!');
+router.get("/secret-route", userMiddleware.isLoggedIn, (req, res, next) => {
+    console.log(req.userData);
+    res.send("This is the secret content. Only logged in users can see that!");
 });
 
-
-router.post('/post-message', userMiddleware.isLoggedIn, (req, res, next) => {
-console.log(req.userData.username);
-console.log(req.body.message);
-db.query(
-`INSERT INTO Messages (author, message, posted_at) VALUES ('${req.userData.username}', ${db.escape(
-req.body.message
-)}, now())`,
-(err, result) => {
-if (err) {
-throw err;
-return res.status(400).send({
-msg: err
-});
-}
-return res.status(201).send({
-msg: 'Sent!'
-});
-}
-);
+router.post("/post-message", userMiddleware.isLoggedIn, (req, res, next) => {
+    console.log(req.userData.username);
+    console.log(req.body.message);
+    db.query(`INSERT INTO Messages (author, message, posted_at) VALUES ('${req.userData.username}', ${db.escape(req.body.message)}, now())`, (err, result) => {
+        if (err) {
+            throw err;
+            return res.status(400).send({
+                msg: err,
+            });
+        }
+        return res.status(201).send({
+            msg: "Sent!",
+        });
+    });
 });
 
-router.post('/like-message', userMiddleware.isLoggedIn, (req, res, next) => {
-	console.log('entering here');
-	db.query(
-		`UPDATE Messages
-		SET post_likes = post_likes + 1
-		WHERE id = ${req.body.id}`,
+router.post("/like-message", userMiddleware.isLoggedIn, (req, res, next) => {
+    console.log("entering here");
+
+    console.log("data: " + req.userData.userId);
+
+    db.query(`SELECT * FROM user_likes WHERE userid = '${req.userData.userId}' AND messageid = ${req.body.id}`, (err, result) => {
+        console.log("Select query done");
+        if (err) {
+            console.log("Error: " + err);
+            throw err;
+        }
+        if (result.length == 0) {
+            console.log("User has not liked message before");
+            db.query(`UPDATE Messages SET post_likes = post_likes + 1 WHERE id = ${req.body.id}`,
 (err, result) => {
 if (err) {
 throw err;
@@ -150,20 +145,43 @@ msg: 'Liked!'
 });
 }
 );
+
+            db.query(`INSERT INTO user_likes (userid, messageid, liked_time) VALUES ('${req.userData.userId}',${req.body.id},now())`);
+        } else {
+            console.log("User has already liked message.");
+        }
+    });
 });
 
-router.get('/get-messages', userMiddleware.isLoggedIn, (req, res, next) => {
-console.log(req.userData);
-db.query(
-`SELECT * FROM Messages`,
-(err, result) => {
-if (err) {
-throw err;
-}
-console.log(result)
-res.json(result);
-}
-);
+router.post("/follow-user", userMiddleware.isLoggedIn, (req, res, next) => {
+	console.log("Entered the follow router");
+	console.log("Author: " + req.body.followed);
+	db.query(
+		`INSERT INTO User_follows (followerId, followedId) VALUES ('${req.userData.userId}', '${req.body.followed}')`, (err, result) => {
+			if(err) {
+				throw err;
+				return res.status(400).send({
+					msg: err
+				});
+			}
+			console.log(result)
+			return res.status(201).send({
+				msg: 'Following user'
+			});
+		}
+	)
+})
+
+router.get("/get-messages", userMiddleware.isLoggedIn, (req, res, next) => {
+    console.log(req.userData);
+    db.query(`SELECT * FROM Messages`, (err, result) => {
+        if (err) {
+            throw err;
+						console.log(err)
+        }
+        console.log(result);
+        res.json(result);
+    });
 });
 
 module.exports = router;

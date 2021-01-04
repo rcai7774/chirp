@@ -2,92 +2,123 @@
 <html>
     <head>
         <title>Chirp</title>
-        <script src = "he.js"></script>
-					<script>
-					
-              function message(){
-                 let message = document.getElementById("message").value;
-                 let token = localStorage.getItem("token");
-								 message = he.encode(message);
-                 let info = {
-                        message: message
-                      }
-                      fetch('/api/post-message', {
-                        method: 'post',
-                        headers: {
-                        'Authorization': 'bearer ' + token,
-                        'Accept': 'application/json, text/plain, */*',
-                        'Content-Type': 'application/json'
-                         },
-                       body: JSON.stringify(info)
-                      }).then(res=>res.json()).then(res => {
-                        console.log(res); document.getElementById("result").innerHTML = "Message Sent."; document.getElementById("message").value = "";
-              })
-              }
+        <script src="he.js"></script>
+        <script>
+            function message() {
+                let message = document.getElementById("message").value;
+                let token = localStorage.getItem("token");
+                message = he.encode(message);
+                let info = {
+                    message: message,
+                };
+                fetch("/api/post-message", {
+                    method: "post",
+                    headers: {
+                        Authorization: "bearer " + token,
+                        Accept: "application/json, text/plain, */*",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(info),
+                })
+                    .then((res) => res.json())
+                    .then((res) => {
+                        console.log(res);
+                        document.getElementById("result").innerHTML = "Message Sent.";
+                        document.getElementById("message").value = "";
+                    });
+            }
 
-							setInterval(function clearRes(){
-								document.getElementById("result").innerHTML = "";
-							}, 7500)
+            setInterval(function clearRes() {
+                document.getElementById("result").innerHTML = "";
+            }, 7500);
 
-            setInterval(function readMessage(){
-            		let feed = document.getElementById('message_feed');
-            		let token = localStorage.getItem("token");
-            		fetch('api/get-messages', {
-            			method: 'get',
-            			headers: {
-            				'Authorization': 'bearer ' + token,
-            				'Accept': 'application/json, text/plain, */*',
-            				'Content-Type': 'application/json'
-            			}
-            		}).then(res=>res.json()).then(res => {
-            			console.log("lengthofres: " + res.length);
-            			displayMessages(res, feed);
-            		})
-            	}, 
-							1000);
+            setInterval(function readMessage() {
+                let feed = document.getElementById("message_feed");
+                let token = localStorage.getItem("token");
+                fetch("api/get-messages", {
+                    method: "get",
+                    headers: {
+                        Authorization: "bearer " + token,
+                        Accept: "application/json, text/plain, */*",
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((res) => res.json())
+                    .then((res) => {
+                        console.log("lengthofres: " + res.length);
+                        displayMessages(res, feed);
+                    });
+            }, 3000);
 
-            	function displayMessages(res, feed){
-            		let tblHtml = `
+            function displayMessages(res, feed) {
+                let tblHtml = `
             		<li style = "text-align: right">`;
-            		for(const k of res){
-            			tblHtml += createRow(k);
-            		}
-            		tblHtml += `</li>`;
-            		feed.innerHTML = tblHtml;
-            	}
+                for (const k of res) {
+                    tblHtml += createRow(k);
+                }
+                tblHtml += `</li>`;
+                feed.innerHTML = tblHtml;
+            }
 
-            	function createRow(k){
-            		return `<li>
-            		<b>${k.author}</b>: ${k.message}, Posted at ${k.posted_at}  <img src = "thumb-up.png" width = "20px" height = "20px" onhover = "" onclick = "likePost(${k.id})"/> ${k.post_likes}
-            		</li>
-            		<br>`
-            	}
-
-							  function likePost(id){
-                 let token = localStorage.getItem("token"); 
-                 let info = {
-									 			'id': id
-                      }
-                      fetch('/api/like-message', {
-                        method: 'post',
-                        headers: {
-                        'Authorization': 'bearer ' + token,
-                        'Accept': 'application/json, text/plain, */*',
-                        'Content-Type': 'application/json'
-                         },
-                       body: JSON.stringify(info)
-                      }).then(res=>res.json()).then(res => {
-                        console.log(res); 
-												console.log('liked');
-												document.getElementById("result").innerHTML = "Message Liked."; 
-              })
-              }
-
-
-							function logMeOut(){
-								localStorage.setItem("token", "")
-								window.open("https://chirp.rcai7774.repl.co" , "_parent")
+						function follow(author){
+							let token = localStorage.getItem("token");
+							console.log(author);
+							let info = {
+								followed: author,
 							}
+							fetch('api/follow-user', {
+								method: "post",
+								headers: {
+									Authorization: "bearer " + token,
+									Accept: "application/json, text/plain, */*",
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify(info),
+							})
+							.then((res) => res.json())
+							.then((res) => {
+								console.log(res);
+								console.log("Now following user");
+
+							})
+						}
+
+            function createRow(k) {
+                return `<li>
+            		<b>${k.author}</b>: <br><br> ${k.message} <br> <br>Posted at ${k.posted_at} <br> <br><img src = "thumb-up.png" width = "20px" height = "20px" onhover = "" onclick = "likePost(${k.id})"/> ${k.post_likes}
+								<br>
+								<span style="width:300px;height:100px;border:1px solid;" onclick="follow('${k.author}')">Follow</span>
+            		</li>
+            		<br>`;
+            }
+
+            function likePost(id) {
+							debugger;
+                let token = localStorage.getItem("token");
+                let info = {
+                    id: id,
+                };
+                fetch("/api/like-message", {
+                    method: "post",
+                    headers: {
+                        Authorization: "bearer " + token,
+                        Accept: "application/json, text/plain, */*",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(info),
+                })
+                    .then((res) => res.json())
+                    .then((res) => {
+                        console.log(res);
+                        console.log("liked");
+                        document.getElementById("result").innerHTML = "Message Liked.";
+                    });
+            }
+
+            function logMeOut() {
+                localStorage.setItem("token", "");
+                window.open("https://chirp.rcai7774.repl.co", "_parent");
+            }
         </script>
     </head>
 
@@ -95,25 +126,22 @@
         <center><h1>Chirp</h1></center>
         <br />
         <left>
-					<img src = "thumb-up.png" width = "20px" height = "20px"/>
-					<div>(╯°□°）╯︵ ┻━┻</div>
-					<br>
-					<div>🎧</div>
-					<br>
-					<div>¯\_(ツ)_/¯</div>
-					<br>
-            <textarea align = "left" id="message" rows="10" cols="50" style="background-color: #c4e2ed; font-family: Courier New;">Send your Chirp here!</textarea>
-						<br>
-						 <input style="background-color: #c4e2ed;" type="button" name="Send Chirp" value="Send" onclick="message()" />
-						<br>
-						<div cols = "50" id="message_feed" align="right">See messages from others here!</div>
+            <img src="thumb-up.png" width="20px" height="20px" />        </left>
+        <br />
+        <div cols="50" id="message_feed" align="right">See messages from others here!</div>
+        <br />
+        <div id="result"></div>
+        <br />
+        <br />
+        <left>
+            <textarea align="left" id="message" rows="10" cols="50" style="background-color: #c4e2ed; font-family: Courier New;">Send your Chirp here!</textarea>
             <br />
-            <div id="result"></div>
+            <input style="background-color: #c4e2ed;" type="button" name="Send Chirp" value="Send" onclick="message()" />
             <br />
-						<button style = "background-color: #c4e2ed;" type = "button" onclick = "logMeOut()">Log Out</button>
+            <br />
+            <button style="background-color: #c4e2ed;" type="button" onclick="logMeOut()">Log Out</button>
         </left>
-				<br>
-<div width = "10px">Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-
+        <br />
+        <div width="10px">Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
     </body>
 </html>
