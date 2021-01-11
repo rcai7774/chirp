@@ -106,7 +106,7 @@ router.get("/secret-route", userMiddleware.isLoggedIn, (req, res, next) => {
 router.post("/post-message", userMiddleware.isLoggedIn, (req, res, next) => {
     console.log(req.userData.username);
     console.log(req.body.message);
-    db.query(`INSERT INTO Messages (author, message, posted_at) VALUES ('${req.userData.username}', ${db.escape(req.body.message)}, now())`, (err, result) => {
+    db.query(`INSERT INTO Messages (author, authorid, message, posted_at) VALUES ('${req.userData.username}', '${req.userData.userId}', ${db.escape(req.body.message)}, now())`, (err, result) => {
         if (err) {
             throw err;
             return res.status(400).send({
@@ -155,31 +155,40 @@ msg: 'Liked!'
 
 router.post("/follow-user", userMiddleware.isLoggedIn, (req, res, next) => {
 	console.log("Entered the follow router");
-	console.log("Author: " + req.body.followed);
-	db.query(
+	console.log("userId: " + req.userData.userId + " authorId: " + req.body.followed);
+
+	if(req.userData.userId === req.body.followed){
+			return res.status(400).send({
+			msg: 'You cannot follow yourself!'
+		})
+	}else{
+		db.query(
 		`INSERT INTO User_follows (followerId, followedId) VALUES ('${req.userData.userId}', '${req.body.followed}')`, (err, result) => {
 			if(err) {
-				throw err;
+				//throw err;
 				return res.status(400).send({
 					msg: err
 				});
 			}
 			console.log(result)
 			return res.status(201).send({
-				msg: 'Following user'
+				msg: 'Now following ' + req.body.followed + '!'
 			});
 		}
-	)
+		)
+		
+	}
+
 })
 
 router.get("/get-messages", userMiddleware.isLoggedIn, (req, res, next) => {
     console.log(req.userData);
-    db.query(`SELECT * FROM Messages`, (err, result) => {
+    db.query(`SELECT * FROM Messages WHERE Messages.authorid IN (SELECT followedId FROM User_follows WHERE followerId = '${req.userData.userId}') OR Messages.authorid = '${req.userData.userId}' ORDER BY Messages.posted_at DESC`, (err, result) => {
         if (err) {
             throw err;
 						console.log(err)
         }
-        console.log(result);
+      //  console.log(result);
         res.json(result);
     });
 });
